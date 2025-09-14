@@ -43,20 +43,6 @@ def get_uber_booking_link(address: str) -> str:
     details = get_address_details(address)
     return generate_uber_link(details)
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
-    host = "0.0.0.0"
-    
-    print(f"Starting FastMCP server on {host}:{port}")
-    
-    mcp.run(
-        transport="http",
-        host=host,
-        port=port,
-        stateless_http=True
-    )
-
-
 @mcp.tool(description="Estimate user's longitude/latitude")
 def get_user_position() -> list:
     url = f"https://www.googleapis.com/geolocation/v1/geolocate?key={GOOGLE_API_KEY}"
@@ -81,3 +67,16 @@ def get_user_position() -> list:
     print("Longitude:", data["location"]["lng"])
     print("Accuracy (meters):", data["accuracy"])
     return [data["location"]["lat"], data["location"]["lng"], data["accuracy"]]
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    host = "0.0.0.0"
+    
+    print(f"Starting FastMCP server on {host}:{port}")
+    
+    mcp.run(
+        transport="http",
+        host=host,
+        port=port,
+        stateless_http=True
+    )
