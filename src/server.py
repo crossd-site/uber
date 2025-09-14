@@ -5,8 +5,11 @@ import requests
 from config import GOOGLE_API_KEY
 from urllib.parse import urlencode
 from fastmcp import FastMCP
+from mcp.server.sse import SseTransport
+from mcp.server.streamable_http import StreamableHTTPTransport
 
-mcp = FastMCP("Sample MCP Server")
+mcp = FastMCP("Uber MCP Server")
+app = mcp.fastapi
 
 def get_address_details(address: str) -> dict:
     base_url = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -48,10 +51,16 @@ if __name__ == "__main__":
     host = "0.0.0.0"
     
     print(f"Starting FastMCP server on {host}:{port}")
-    
-    mcp.run(
-        transport="http",
-        host=host,
-        port=port,
-        stateless_http=True
-    )
+
+    # Mount both transports on the FastAPI app
+    StreamableHTTPTransport(app, path="/mcp")   # Inspector
+    SseTransport(app, path="/sse")              # Poke & other SSE clients
+
+    import uvicorn
+    uvicorn.run(app, host=host, port=port)
+    # mcp.run(
+    #     transport="http",
+    #     host=host,
+    #     port=port,
+    #     stateless_http=True
+    # )
