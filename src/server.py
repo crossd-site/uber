@@ -6,7 +6,7 @@ from config import GOOGLE_API_KEY
 from urllib.parse import urlencode
 from fastmcp import FastMCP
 
-mcp = FastMCP("Sample MCP Server")
+mcp = FastMCP("Uber MCP Server")
 
 def get_address_details(address: str) -> dict:
     base_url = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -42,31 +42,6 @@ def generate_uber_link(details: dict) -> str:
 def get_uber_booking_link(address: str) -> str:
     details = get_address_details(address)
     return generate_uber_link(details)
-
-@mcp.tool(description="Estimate user's longitude/latitude")
-def get_user_position() -> list:
-    url = f"https://www.googleapis.com/geolocation/v1/geolocate?key={GOOGLE_API_KEY}"
-    
-    payload = {
-        "homeMobileCountryCode": 310,
-        "homeMobileNetworkCode": 410,
-        "radioType": "gsm",
-        "carrier": "Vodafone",
-        "considerIp": True
-    }
-
-    headers = {"Content-Type": "application/json"}
-
-    resp = requests.post(url, json=payload, headers=headers, timeout=10)
-
-    if resp.status_code != 200:
-        raise RuntimeError(f"Geolocation API error: {resp.status_code}, {resp.text}")
-
-    data = resp.json()
-    print("Latitude:", data["location"]["lat"])
-    print("Longitude:", data["location"]["lng"])
-    print("Accuracy (meters):", data["accuracy"])
-    return [data["location"]["lat"], data["location"]["lng"], data["accuracy"]]
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
