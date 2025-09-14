@@ -24,7 +24,7 @@ def get_address_details(address: str) -> dict:
         "address": formatted_address
     }
 
-def get_uber_link(details: dict) -> str:
+def generate_uber_link(details: dict) -> str:
     address = details["address"]
     base_url = "uber://?"
     params = {
@@ -39,9 +39,9 @@ def get_uber_link(details: dict) -> str:
     return url
 
 @mcp.tool(description="Get the URL link to book an Uber ride to a given address from current location")
-def book_uber(address: str) -> str:
+def get_uber_booking_link(address: str) -> str:
     details = get_address_details(address)
-    return get_uber_link(details)
+    return generate_uber_link(details)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
