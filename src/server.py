@@ -55,3 +55,29 @@ if __name__ == "__main__":
         port=port,
         stateless_http=True
     )
+
+
+@mcp.tool(description="Estimate user's longitude/latitude")
+def get_user_position() -> list:
+    url = f"https://www.googleapis.com/geolocation/v1/geolocate?key={GOOGLE_API_KEY}"
+    
+    payload = {
+        "homeMobileCountryCode": 310,
+        "homeMobileNetworkCode": 410,
+        "radioType": "gsm",
+        "carrier": "Vodafone",
+        "considerIp": True
+    }
+
+    headers = {"Content-Type": "application/json"}
+
+    resp = requests.post(url, json=payload, headers=headers, timeout=10)
+
+    if resp.status_code != 200:
+        raise RuntimeError(f"Geolocation API error: {resp.status_code}, {resp.text}")
+
+    data = resp.json()
+    print("Latitude:", data["location"]["lat"])
+    print("Longitude:", data["location"]["lng"])
+    print("Accuracy (meters):", data["accuracy"])
+    return [data["location"]["lat"], data["location"]["lng"], data["accuracy"]]
