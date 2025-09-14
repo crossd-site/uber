@@ -2,7 +2,7 @@
 import os
 import requests
 
-from .config import GOOGLE_API_KEY
+from config import GOOGLE_API_KEY
 from urllib.parse import urlencode
 from fastmcp import FastMCP
 
