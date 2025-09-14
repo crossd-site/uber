@@ -9,3 +9,5 @@ services:
     envVars:
       - key: ENVIRONMENT
         value: production
+      - key: GOOGLE_API_KEY
+        fromSecret: google_api_key
